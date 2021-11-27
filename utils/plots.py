@@ -476,6 +476,6 @@ def get_crop_hsv_resized(xyxy, im, gain=1.02, pad=10, BGR=True):
     xyxy = xywh2xyxy(b).long()
     clip_coords(xyxy, im.shape)
     crop = im[int(xyxy[0, 1]):int(xyxy[0, 3]), int(xyxy[0, 0]):int(xyxy[0, 2]), ::1]
-    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    hsv = cv2.cvtColor(crop, cv2.COLOR_BGR2HSV)
     res = cv2.resize(hsv, (32,32), interpolation=cv2.INTER_AREA)
     return res
