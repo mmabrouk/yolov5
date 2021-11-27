@@ -35,6 +35,7 @@ from utils.plots import Annotator, colors, save_one_box, get_crop_hsv_resized
 from utils.torch_utils import select_device, time_sync
 
 from sklearn.cluster import KMeans
+from gapstat import GapStatClustering
 
 @torch.no_grad()
 def run(weights=ROOT / 'yolov5s.pt',  # model.pt path(s)
@@ -85,7 +86,8 @@ def run(weights=ROOT / 'yolov5s.pt',  # model.pt path(s)
     half &= (pt or engine) and device.type != 'cpu'  # half precision only supported by PyTorch on CUDA
     if pt:
         model.model.half() if half else model.model.float()
-    kmeans = KMeans(n_clusters=2)
+    kmeans = GapStatClustering(max_k=4)
+
     # Dataloader
     if webcam:
         view_img = check_imshow()
