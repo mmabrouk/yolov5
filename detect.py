@@ -16,7 +16,7 @@ import argparse
 import os
 import sys
 from pathlib import Path
-
+import numpy as np
 import cv2
 import torch
 import torch.backends.cudnn as cudnn
@@ -159,7 +159,10 @@ def run(weights=ROOT / 'yolov5s.pt',  # model.pt path(s)
                         new_result.append((xyxy, get_crop_hsv_resized(xyxy, imc)))
                 
                 kmeans = KMeans(n_clusters=2)
-                import ipdb;ipdb.set_trace()
+                kmeans.fit(np.array([_[1].reshape(-1) for _ in new_result]))
+                for (xyxy, crop), label in zip(new_result, kmeans.labels_):
+                    annotator.box_label(xyxy, f"Team {label}", color=colors(c, True))
+                # import ipdb;ipdb.set_trace()
                     # if save_txt:  # Write to file
                     #     xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
                     #     line = (cls, *xywh, conf) if save_conf else (cls, *xywh)  # label format
