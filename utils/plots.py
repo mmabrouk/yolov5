@@ -468,3 +468,14 @@ def save_one_box(xyxy, im, file='image.jpg', gain=1.02, pad=10, square=False, BG
         file.parent.mkdir(parents=True, exist_ok=True)  # make directory
         cv2.imwrite(str(increment_path(file).with_suffix('.jpg')), crop)
     return crop
+
+def get_crop_hsv_resized(xyxy, im, gain=1.02, pad=10, BGR=True):
+    xyxy = torch.tensor(xyxy).view(-1, 4)
+    b = xyxy2xywh(xyxy)  # boxes
+    b[:, 2:] = b[:, 2:] * gain + pad  # box wh * gain + pad
+    xyxy = xywh2xyxy(b).long()
+    clip_coords(xyxy, im.shape)
+    crop = im[int(xyxy[0, 1]):int(xyxy[0, 3]), int(xyxy[0, 0]):int(xyxy[0, 2]), ::1]
+    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    res = cv2.resize(hsv, (32,32), interpolation=cv2.INTER_AREA)
+    return res
