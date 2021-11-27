@@ -159,7 +159,7 @@ def run(weights=ROOT / 'yolov5s.pt',  # model.pt path(s)
                     if names[c] == "person":
                         new_crops.append(get_crop_hsv_resized(xyxy, imc).reshape(-1))
                         new_result.append(xyxy)
-                if len(new_crops>1):
+                if len(new_crops)>1:
                     kmeans.fit(new_crops)
                     for xyxy, label in zip(new_result, kmeans.labels_):
                         annotator.box_label(xyxy, f"Team {label}", color=colors(c, True))
