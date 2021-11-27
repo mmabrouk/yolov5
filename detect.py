@@ -85,7 +85,7 @@ def run(weights=ROOT / 'yolov5s.pt',  # model.pt path(s)
     half &= (pt or engine) and device.type != 'cpu'  # half precision only supported by PyTorch on CUDA
     if pt:
         model.model.half() if half else model.model.float()
-
+    kmeans = KMeans(n_clusters=2)
     # Dataloader
     if webcam:
         view_img = check_imshow()
@@ -152,16 +152,17 @@ def run(weights=ROOT / 'yolov5s.pt',  # model.pt path(s)
                     s += f"{n} {names[int(c)]}{'s' * (n > 1)}, "  # add to string
 
                 # Write results
+                new_crops = []
                 new_result = []
                 for *xyxy, conf, cls in reversed(det): # cnf confidence, prediction class, xyxy box
                     c = int(cls)  # integer class
                     if names[c] == "person":
-                        new_result.append((xyxy, get_crop_hsv_resized(xyxy, imc)))
-                
-                kmeans = KMeans(n_clusters=2)
-                kmeans.fit(np.array([_[1].reshape(-1) for _ in new_result]))
-                for (xyxy, crop), label in zip(new_result, kmeans.labels_):
-                    annotator.box_label(xyxy, f"Team {label}", color=colors(c, True))
+                        new_crops.append(get_crop_hsv_resized(xyxy, imc).reshape(-1))
+                        new_result.append(xyxy)
+                if len(new_crops>1):
+                    kmeans.fit(new_crops)
+                    for xyxy, label in zip(new_result, kmeans.labels_):
+                        annotator.box_label(xyxy, f"Team {label}", color=colors(c, True))
                 # import ipdb;ipdb.set_trace()
                     # if save_txt:  # Write to file
                     #     xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
