@@ -35,7 +35,7 @@ from utils.plots import Annotator, colors, save_one_box, get_crop_hsv_resized
 from utils.torch_utils import select_device, time_sync
 
 from sklearn.cluster import KMeans
-from gapstat import GapStatClustering
+from gapstat import gapstat
 
 @torch.no_grad()
 def run(weights=ROOT / 'yolov5s.pt',  # model.pt path(s)
@@ -86,7 +86,10 @@ def run(weights=ROOT / 'yolov5s.pt',  # model.pt path(s)
     half &= (pt or engine) and device.type != 'cpu'  # half precision only supported by PyTorch on CUDA
     if pt:
         model.model.half() if half else model.model.float()
-    kmeans = GapStatClustering(max_k=4)
+    # kmeans1 = KMeans(k=2)
+    kmeans = []
+    for myk in range(2,5):
+        kmeans.append(KMeans(k=myk))
 
     # Dataloader
     if webcam:
@@ -161,9 +164,13 @@ def run(weights=ROOT / 'yolov5s.pt',  # model.pt path(s)
                     if names[c] == "person":
                         new_crops.append(get_crop_hsv_resized(xyxy, imc).reshape(-1))
                         new_result.append(xyxy)
-                if len(new_crops)>1:
-                    kmeans.fit(new_crops)
-                    for xyxy, label in zip(new_result, kmeans.labels_):
+                if len(new_crops)>3:
+                    betgap = -np.inf
+                    for nk, km in enumerate(kmeans):
+                        n_clusters, labels = gapstat(new_crops,
+                                                     max_k=4,
+                                                     B1=len(new_crops))
+                    for xyxy, label in zip(new_result, labels):
                         annotator.box_label(xyxy, f"Team {label}", color=colors(c, True))
                 # import ipdb;ipdb.set_trace()
                     # if save_txt:  # Write to file
