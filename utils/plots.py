@@ -479,3 +479,13 @@ def get_crop_hsv_resized(xyxy, im, gain=1.02, pad=10, BGR=True):
     hsv = cv2.cvtColor(crop, cv2.COLOR_BGR2HSV)
     res = cv2.resize(hsv, (32,32), interpolation=cv2.INTER_AREA)
     return res
+
+def finddominantcolor(im):
+    data = np.reshape(im, (-1,3))
+    print(data)
+    data = np.float32(data)
+    criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0)
+    flags = cv2.KMEANS_RANDOM_CENTERS
+    compactness,labels,centers = cv2.kmeans(data,1,None,criteria,10,flags)
+
+    print('Dominant color is: bgr({})'.format(centers[0].astype(np.int32)))

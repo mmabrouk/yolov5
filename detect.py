@@ -36,6 +36,7 @@ from utils.torch_utils import select_device, time_sync
 
 from sklearn.cluster import KMeans
 from gapstat import gapstat
+import utils.plots as myplots
 
 @torch.no_grad()
 def run(weights=ROOT / 'yolov5s.pt',  # model.pt path(s)
@@ -87,10 +88,10 @@ def run(weights=ROOT / 'yolov5s.pt',  # model.pt path(s)
     if pt:
         model.model.half() if half else model.model.float()
     # kmeans1 = KMeans(k=2)
-    kmeans = []
-    for myk in range(2,5):
-        kmeans.append(KMeans(k=myk))
-
+    # kmeans = []
+    # for myk in range(2,5):
+    #     kmeans.append(KMeans(k=myk))
+    kmeans = KMeans(n_clusters=3)
     # Dataloader
     if webcam:
         view_img = check_imshow()
@@ -107,6 +108,8 @@ def run(weights=ROOT / 'yolov5s.pt',  # model.pt path(s)
         model(torch.zeros(1, 3, *imgsz).to(device).type_as(next(model.model.parameters())))  # warmup
     dt, seen = [0.0, 0.0, 0.0], 0
     for ii, (path, im, im0s, vid_cap, s) in enumerate(dataset):
+        if ii==0:
+            myplots.finddominantcolor(im)
         if ii>600:
             break
         t1 = time_sync()
@@ -165,11 +168,9 @@ def run(weights=ROOT / 'yolov5s.pt',  # model.pt path(s)
                         new_crops.append(get_crop_hsv_resized(xyxy, imc).reshape(-1))
                         new_result.append(xyxy)
                 if len(new_crops)>3:
-                    betgap = -np.inf
-                    for nk, km in enumerate(kmeans):
-                        n_clusters, labels = gapstat(new_crops,
-                                                     max_k=4,
-                                                     B1=len(new_crops))
+                    # betgap = -np.inf
+                    # for nk, km in enumerate(kmeans):
+                    labels = kmeans.fit(new_crops).labels_
                     for xyxy, label in zip(new_result, labels):
                         annotator.box_label(xyxy, f"Team {label}", color=colors(c, True))
                 # import ipdb;ipdb.set_trace()
