@@ -108,10 +108,7 @@ def run(weights=ROOT / 'yolov5s.pt',  # model.pt path(s)
         model(torch.zeros(1, 3, *imgsz).to(device).type_as(next(model.model.parameters())))  # warmup
     dt, seen = [0.0, 0.0, 0.0], 0
     for ii, (path, im, im0s, vid_cap, s) in enumerate(dataset):
-        if ii<5:
-            myplots.finddominantcolor(im)
-        else:
-            import ipdb;ipdb.set_trace()
+        myplots.finddominantcolor(im0s)
         if ii>30:
             break
         t1 = time_sync()
