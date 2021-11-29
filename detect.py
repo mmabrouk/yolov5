@@ -183,8 +183,8 @@ def run(weights=ROOT / 'yolov5s.pt',  # model.pt path(s)
                 lower2red = np.array([160, 100, 20])
                 upper2red = np.array([179, 255, 255])
 
-                lower_white = [0, 0, 0]
-                upper_white = [180, 50, 50]
+                lower_white = np.array([0, 0, 0])
+                upper_white = np.array([180, 50, 50])
 
                 for xyxy, crop in zip(new_result, new_crops):
                     lower_mask_red = cv2.inRange(crop, lower1red, upper1red)
@@ -193,8 +193,6 @@ def run(weights=ROOT / 'yolov5s.pt',  # model.pt path(s)
                     red_mask = cv2.erode(red_mask, None, iterations = 2)
                     resred = cv2.bitwise_and(crop, crop, mask= red_mask)
                     ratio_red = count_nonblack_np(resred)/count_nonblack_np(crop)
-
-
                     
                     mask_white = cv2.inRange(crop, lower_white, upper_white)
                     mask_white = cv2.erode(mask_white, None, iterations = 2)
