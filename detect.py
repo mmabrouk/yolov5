@@ -170,7 +170,8 @@ def run(weights=ROOT / 'yolov5s.pt',  # model.pt path(s)
                 for *xyxy, conf, cls in reversed(det): # cnf confidence, prediction class, xyxy box
                     c = int(cls)  # integer class
                     if names[c] == "person":
-                        new_crops.append(get_crop_hsv_resized(xyxy, imc).reshape(-1))
+                        # new_crops.append(get_crop_hsv_resized(xyxy, imc).reshape(-1))
+                        new_crops.append(get_crop_hsv_resized(xyxy, imc))
                         new_result.append(xyxy)
                 # if len(new_crops)>3:
                     # betgap = -np.inf
@@ -179,8 +180,8 @@ def run(weights=ROOT / 'yolov5s.pt',  # model.pt path(s)
                 # lower boundary RED color range values; Hue (0 - 10)
                 lower1red = np.array([0, 100, 20])
                 upper1red = np.array([10, 255, 255])
-                lower2red = np.array([160,100,20])
-                upper2red = np.array([179,255,255])
+                lower2red = np.array([160, 100, 20])
+                upper2red = np.array([179, 255, 255])
 
                 lower_white = [0, 0, 0]
                 upper_white = [180, 50, 50]
