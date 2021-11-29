@@ -37,6 +37,12 @@ from utils.torch_utils import select_device, time_sync
 from sklearn.cluster import KMeans
 from gapstat import gapstat
 import utils.plots as myplots
+def count_nonblack_np(img):
+    """Return the number of pixels in img that are not black.
+    img must be a Numpy array with colour values along the last axis.
+
+    """
+    return img.any(axis=-1).sum()
 
 @torch.no_grad()
 def run(weights=ROOT / 'yolov5s.pt',  # model.pt path(s)
@@ -173,15 +179,13 @@ def run(weights=ROOT / 'yolov5s.pt',  # model.pt path(s)
                 # lower boundary RED color range values; Hue (0 - 10)
                 lower1red = np.array([0, 100, 20])
                 upper1red = np.array([10, 255, 255])
-                
-                # upper boundary RED color range values; Hue (160 - 180)
                 lower2red = np.array([160,100,20])
                 upper2red = np.array([179,255,255])
 
                 lower_white = [0, 0, 0]
                 upper_white = [180, 50, 50]
 
-                for xyxy, label, crop in zip(new_result, labels, new_crops):
+                for xyxy, crop in zip(new_result, new_crops):
                     lower_mask_red = cv2.inRange(crop, lower1red, upper1red)
                     upper_mask_red = cv2.inRange(crop, lower2red, upper2red)
                     red_mask = lower_mask_red + upper_mask_red
