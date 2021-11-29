@@ -166,12 +166,41 @@ def run(weights=ROOT / 'yolov5s.pt',  # model.pt path(s)
                     if names[c] == "person":
                         new_crops.append(get_crop_hsv_resized(xyxy, imc).reshape(-1))
                         new_result.append(xyxy)
-                if len(new_crops)>3:
+                # if len(new_crops)>3:
                     # betgap = -np.inf
                     # for nk, km in enumerate(kmeans):
-                    labels = kmeans.fit(new_crops).labels_
-                    for xyxy, label in zip(new_result, labels):
-                        annotator.box_label(xyxy, f"Team {label}", color=colors(c, True))
+                    # labels = kmeans.fit(new_crops).labels_
+                # lower boundary RED color range values; Hue (0 - 10)
+                lower1red = np.array([0, 100, 20])
+                upper1red = np.array([10, 255, 255])
+                
+                # upper boundary RED color range values; Hue (160 - 180)
+                lower2red = np.array([160,100,20])
+                upper2red = np.array([179,255,255])
+
+                lower_white = [0, 0, 0]
+                upper_white = [180, 50, 50]
+
+                for xyxy, label, crop in zip(new_result, labels, new_crops):
+                    lower_mask_red = cv2.inRange(crop, lower1red, upper1red)
+                    upper_mask_red = cv2.inRange(crop, lower2red, upper2red)
+                    red_mask = lower_mask_red + upper_mask_red
+                    red_mask = cv2.erode(red_mask, None, iterations = 2)
+                    resred = cv2.bitwise_and(crop, crop, mask= red_mask)
+                    ratio_red = count_nonblack_np(resred)/count_nonblack_np(crop)
+
+
+                    
+                    mask_white = cv2.inRange(crop, lower_white, upper_white)
+                    mask_white = cv2.erode(mask_white, None, iterations = 2)
+                    reswhite = cv2.bitwise_and(crop, crop, mask= mask_white)
+                    ratio_white = count_nonblack_np(reswhite)/count_nonblack_np(crop)
+
+                    if ratio_white > ratio_red:
+                        label = f"white {ratio_white}>{ratio_red}"
+                    else:
+                        label = f"red {ratio_red}>{ratio_white}"
+                    annotator.box_label(xyxy, f"Team {label}", color=colors(c, True))
                 # import ipdb;ipdb.set_trace()
                     # if save_txt:  # Write to file
                     #     xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
