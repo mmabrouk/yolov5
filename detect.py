@@ -198,17 +198,21 @@ def run(weights=ROOT / 'yolov5s.pt',  # model.pt path(s)
                     upper_mask_red = cv2.inRange(crop, lower2red, upper2red)
                     red_mask = lower_mask_red + upper_mask_red
                     save_crop_(red_mask, str(save_dir), ix, ii, "red_mask0", mask=True)
-                    red_mask = cv2.erode(red_mask, None, iterations = 2)
+                    red_mask = cv2.dilate(red_mask, None, iterations = 2)
                     save_crop_(red_mask, str(save_dir), ix, ii, "red_mask1", mask=True)
                     resred = cv2.bitwise_and(crop, crop, mask= red_mask)
                     save_crop_(resred, str(save_dir), ix, ii, "red_mask2")
-                    save_crop_(crop, str(save_dir), ix, ii, "crop")
-                    ratio_red = count_nonblack_np(resred)/count_nonblack_np(crop)
+                    # save_crop_(crop, str(save_dir), ix, ii, "crop")
+                    ratio_red = (red_mask==255).sum()/64**2
+
                     save_one_box(xyxy, imc, file=save_dir / f"{ii}_{ix}origcrop.jpg", BGR=True)
-                    mask_white = cv2.inRange(crop, lower_white, upper_white)
-                    mask_white = cv2.erode(mask_white, None, iterations = 2)
-                    reswhite = cv2.bitwise_and(crop, crop, mask= mask_white)
-                    ratio_white = count_nonblack_np(reswhite)/count_nonblack_np(crop)
+                    white_mask = cv2.inRange(crop, lower_white, upper_white)
+                    save_crop_(white_mask, str(save_dir), ix, ii, "white_mask0", mask=True)
+                    white_mask = cv2.dilate(white_mask, None, iterations = 2)
+                    save_crop_(white_mask, str(save_dir), ix, ii, "white_mask1", mask=True)
+                    reswhite = cv2.bitwise_and(crop, crop, mask= white_mask)
+                    save_crop_(resred, str(save_dir), ix, ii, "white_mask3")
+                    ratio_white = (white_mask==255).sum()/64**2
 
                     if ratio_white > ratio_red:
                         label = f"white {ratio_white}>{ratio_red}"
