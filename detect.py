@@ -223,11 +223,11 @@ def run(weights=ROOT / 'yolov5s.pt',  # model.pt path(s)
                     if ((ratio_red>0.15) or (ratio_white>0.15)):
                         if ratio_white > ratio_red:
                             # label = f"white {ratio_white:.2f}>{ratio_red:.2f}"
-                            label = f"white Team"
+                            label = f"white"
                             n_white+=1
                         else:
                             # label = f"red {ratio_red:.2f}>{ratio_white:.2f}"
-                            label = f"red Team"
+                            label = f"red"
                             n_red+=1
                         annotator.box_label(xyxy, f"Team {label}", color=colors(c, True))
                 annotator.text((0,0), f"{n_white} white / {n_red} red", pil=False)
