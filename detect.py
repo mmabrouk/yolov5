@@ -120,7 +120,7 @@ def run(weights=ROOT / 'yolov5s.pt',  # model.pt path(s)
     dt, seen = [0.0, 0.0, 0.0], 0
     for ii, (path, im, im0s, vid_cap, s) in enumerate(dataset):
         myplots.finddominantcolor(im0s)
-        if ii>30:
+        if ii>10:
             break
         t1 = time_sync()
         im = torch.from_numpy(im).to(device)
