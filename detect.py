@@ -191,8 +191,8 @@ def run(weights=ROOT / 'yolov5s.pt',  # model.pt path(s)
                 lower2red = np.array([160, 100, 20])
                 upper2red = np.array([179, 255, 255])
 
-                lower_white = np.array([0, 0, 0])
-                upper_white = np.array([180, 50, 50])
+                lower_white = np.array([0,0,168])
+                upper_white = np.array([172,111,255])
                 for ix, (xyxy, crop) in enumerate(zip(new_result, new_crops)):
                     lower_mask_red = cv2.inRange(crop, lower1red, upper1red)
                     upper_mask_red = cv2.inRange(crop, lower2red, upper2red)
@@ -211,7 +211,7 @@ def run(weights=ROOT / 'yolov5s.pt',  # model.pt path(s)
                     white_mask = cv2.dilate(white_mask, None, iterations = 2)
                     save_crop_(white_mask, str(save_dir), ix, ii, "white_mask1", mask=True)
                     reswhite = cv2.bitwise_and(crop, crop, mask= white_mask)
-                    save_crop_(resred, str(save_dir), ix, ii, "white_mask3")
+                    save_crop_(reswhite, str(save_dir), ix, ii, "white_mask3")
                     ratio_white = (white_mask==255).sum()/64**2
 
                     if ratio_white > ratio_red:
