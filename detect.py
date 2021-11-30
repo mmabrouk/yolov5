@@ -44,11 +44,13 @@ def count_nonblack_np(img):
     """
     return img.any(axis=-1).sum()
 
-def save_crop_(crop, save_dir, crop_i, frame_i, annot=""):
+def save_crop_(crop, save_dir, crop_i, frame_i, annot="", mask=False):
     Path(save_dir).parent.mkdir(parents=True, exist_ok=True)
     out_fname = join(save_dir, f"{frame_i}_{crop_i}{annot}.jpg")
-    import ipdb; ipdb.set_trace()
-    cv2.imwrite(out_fname, cv2.cvtColor(crop, cv2.COLOR_HSV2BGR))
+    if mask:
+        cv2.imwrite(out_fname, cv2.cvtColor(crop, cv2.COLOR_GREY2BGR))
+    else:
+        cv2.imwrite(out_fname, cv2.cvtColor(crop, cv2.COLOR_HSV2BGR))
 
 @torch.no_grad()
 def run(weights=ROOT / 'yolov5s.pt',  # model.pt path(s)
