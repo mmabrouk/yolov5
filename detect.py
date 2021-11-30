@@ -123,7 +123,7 @@ def run(weights=ROOT / 'yolov5s.pt',  # model.pt path(s)
     dt, seen = [0.0, 0.0, 0.0], 0
     for ii, (path, im, im0s, vid_cap, s) in enumerate(dataset):
         myplots.finddominantcolor(im0s)
-        if ii>1:
+        if ii>100:
             break
         t1 = time_sync()
         im = torch.from_numpy(im).to(device)
@@ -197,21 +197,26 @@ def run(weights=ROOT / 'yolov5s.pt',  # model.pt path(s)
                     lower_mask_red = cv2.inRange(crop, lower1red, upper1red)
                     upper_mask_red = cv2.inRange(crop, lower2red, upper2red)
                     red_mask = lower_mask_red + upper_mask_red
-                    save_crop_(red_mask, str(save_dir), ix, ii, "red_mask0", mask=True)
+                    if ii%10==0:
+                        save_crop_(red_mask, str(save_dir), ix, ii, "red_mask0", mask=True)
                     red_mask = cv2.dilate(red_mask, None, iterations = 2)
-                    save_crop_(red_mask, str(save_dir), ix, ii, "red_mask1", mask=True)
+                    if ii%10==0:
+                        save_crop_(red_mask, str(save_dir), ix, ii, "red_mask1", mask=True)
                     resred = cv2.bitwise_and(crop, crop, mask= red_mask)
-                    save_crop_(resred, str(save_dir), ix, ii, "red_mask2")
-                    # save_crop_(crop, str(save_dir), ix, ii, "crop")
+                    if ii%10==0:
+                        save_crop_(resred, str(save_dir), ix, ii, "red_mask2")
                     ratio_red = (red_mask==255).sum()/64**2
 
                     save_one_box(xyxy, imc, file=save_dir / f"{ii}_{ix}origcrop.jpg", BGR=True)
                     white_mask = cv2.inRange(crop, lower_white, upper_white)
-                    save_crop_(white_mask, str(save_dir), ix, ii, "white_mask0", mask=True)
+                    if ii%10==0:
+                        save_crop_(white_mask, str(save_dir), ix, ii, "white_mask0", mask=True)
                     white_mask = cv2.dilate(white_mask, None, iterations = 2)
-                    save_crop_(white_mask, str(save_dir), ix, ii, "white_mask1", mask=True)
+                    if ii%10==0:
+                        save_crop_(white_mask, str(save_dir), ix, ii, "white_mask1", mask=True)
                     reswhite = cv2.bitwise_and(crop, crop, mask= white_mask)
-                    save_crop_(reswhite, str(save_dir), ix, ii, "white_mask3")
+                    if ii%10==0:
+                        save_crop_(reswhite, str(save_dir), ix, ii, "white_mask3")
                     ratio_white = (white_mask==255).sum()/64**2
 
                     if ratio_white > ratio_red:
