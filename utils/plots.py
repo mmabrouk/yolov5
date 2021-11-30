@@ -111,11 +111,16 @@ class Annotator:
         # Add rectangle to image (PIL-only)
         self.draw.rectangle(xy, fill, outline, width)
 
-    def text(self, xy, text, txt_color=(255, 255, 255)):
+    def text(self, xy, text, txt_color=(255, 255, 255), pil=True):
         # Add text to image (PIL-only)
-        w, h = self.font.getsize(text)  # text width, height
-        self.draw.text((xy[0], xy[1] - h + 1), text, fill=txt_color, font=self.font)
-
+        if pil:
+            w, h = self.font.getsize(text)  # text width, height
+            self.draw.text((xy[0], xy[1] - h + 1), text, fill=txt_color, font=self.font)
+        else:
+            tf = max(self.lw - 1, 1)  # font thickness
+            w, h = cv2.getTextSize(label, 0, fontScale=self.lw / 3, thickness=tf)[0]  # text width, height
+            cv2.putText(self.im, label, (xy[0], xy[1]), 0, self.lw / 3, txt_color,
+                        thickness=tf, lineType=cv2.LINE_AA)
     def result(self):
         # Return annotated image as array
         return np.asarray(self.im)

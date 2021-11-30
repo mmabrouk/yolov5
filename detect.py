@@ -122,6 +122,7 @@ def run(weights=ROOT / 'yolov5s.pt',  # model.pt path(s)
         model(torch.zeros(1, 3, *imgsz).to(device).type_as(next(model.model.parameters())))  # warmup
     dt, seen = [0.0, 0.0, 0.0], 0
     for ii, (path, im, im0s, vid_cap, s) in enumerate(dataset):
+        n_white, n_red = 0,0
         myplots.finddominantcolor(im0s)
         if ii>100:
             break
@@ -219,11 +220,15 @@ def run(weights=ROOT / 'yolov5s.pt',  # model.pt path(s)
                         save_crop_(reswhite, str(save_dir), ix, ii, "white_mask3")
                     ratio_white = (white_mask==255).sum()/64**2
 
-                    if ratio_white > ratio_red:
-                        label = f"white {ratio_white:.2f}>{ratio_red:.2f}"
-                    else:
-                        label = f"red {ratio_red:.2f}>{ratio_white:.2f}"
-                    annotator.box_label(xyxy, f"Team {label}", color=colors(c, True))
+                    if ((ratio_red>0.1) or (ratio_white>0.1)):
+                        if ratio_white > ratio_red:
+                            label = f"white {ratio_white:.2f}>{ratio_red:.2f}"
+                            n_white+=1
+                        else:
+                            label = f"red {ratio_red:.2f}>{ratio_white:.2f}"
+                            n_red+=1
+                        annotator.box_label(xyxy, f"Team {label}", color=colors(c, True))
+                annotator.text((0,0), f"{n_white} white / {n_red} red", pil=False)
                 # import ipdb;ipdb.set_trace()
                     # if save_txt:  # Write to file
                     #     xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
