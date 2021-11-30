@@ -220,7 +220,7 @@ def run(weights=ROOT / 'yolov5s.pt',  # model.pt path(s)
                         save_crop_(reswhite, str(save_dir), ix, ii, "white_mask3")
                     ratio_white = (white_mask==255).sum()/64**2
 
-                    if ((ratio_red>0.1) or (ratio_white>0.1)):
+                    if ((ratio_red>0.15) or (ratio_white>0.15)):
                         if ratio_white > ratio_red:
                             label = f"white {ratio_white:.2f}>{ratio_red:.2f}"
                             n_white+=1
