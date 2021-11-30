@@ -158,7 +158,7 @@ def run(weights=ROOT / 'yolov5s.pt',  # model.pt path(s)
             txt_path = str(save_dir / 'labels' / p.stem) + ('' if dataset.mode == 'image' else f'_{frame}')  # im.txt
             s += '%gx%g ' % im.shape[2:]  # print string
             gn = torch.tensor(im0.shape)[[1, 0, 1, 0]]  # normalization gain whwh
-            imc = im0.copy() if save_crop else im0  # for save_crop
+            imc = im0.copy() if True else im0  # for save_crop
             annotator = Annotator(im0, line_width=line_thickness, example=str(names))
             if len(det):
                 # Rescale boxes from img_size to im0 size
@@ -201,7 +201,7 @@ def run(weights=ROOT / 'yolov5s.pt',  # model.pt path(s)
                     save_crop_(resred, str(save_dir), ix, ii, "red_mask2")
                     save_crop_(crop, str(save_dir), ix, ii, "crop")
                     ratio_red = count_nonblack_np(resred)/count_nonblack_np(crop)
-                    
+                    save_one_box(xyxy, imc, file=save_dir / f'{p.stem}.jpg', BGR=True)
                     mask_white = cv2.inRange(crop, lower_white, upper_white)
                     mask_white = cv2.erode(mask_white, None, iterations = 2)
                     reswhite = cv2.bitwise_and(crop, crop, mask= mask_white)
