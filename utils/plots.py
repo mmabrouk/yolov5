@@ -119,7 +119,7 @@ class Annotator:
         else:
             tf = max(self.lw - 1, 1)  # font thickness
             w, h = cv2.getTextSize(text, 0, fontScale=self.lw / 3, thickness=tf)[0]  # text width, height
-            cv2.putText(self.im, text, (xy[0], xy[1]-h+1), 0, self.lw / 3, txt_color,
+            cv2.putText(self.im, text, (xy[0], xy[1]+h+1), 0, self.lw / 3, txt_color,
                         thickness=tf, lineType=cv2.LINE_AA)
     def result(self):
         # Return annotated image as array
