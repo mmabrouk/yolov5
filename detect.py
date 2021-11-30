@@ -20,7 +20,7 @@ import numpy as np
 import cv2
 import torch
 import torch.backends.cudnn as cudnn
-
+from os.path import join
 FILE = Path(__file__).resolve()
 ROOT = FILE.parents[0]  # YOLOv5 root directory
 if str(ROOT) not in sys.path:
@@ -43,6 +43,11 @@ def count_nonblack_np(img):
 
     """
     return img.any(axis=-1).sum()
+
+def save_crop_(crop, save_dir, crop_i, frame_i, annot=""):
+    Path(save_dir).parent.mkdir(parents=True, exist_ok=True)
+    out_fname = join(save_dir, f"{frame_i}_{crop_i}{annot}.jpg")
+    cv2.imwrite(out_fname, crop)
 
 @torch.no_grad()
 def run(weights=ROOT / 'yolov5s.pt',  # model.pt path(s)
@@ -185,13 +190,16 @@ def run(weights=ROOT / 'yolov5s.pt',  # model.pt path(s)
 
                 lower_white = np.array([0, 0, 0])
                 upper_white = np.array([180, 50, 50])
-
-                for xyxy, crop in zip(new_result, new_crops):
+                for ix, (xyxy, crop) in enumerate(zip(new_result, new_crops)):
                     lower_mask_red = cv2.inRange(crop, lower1red, upper1red)
                     upper_mask_red = cv2.inRange(crop, lower2red, upper2red)
                     red_mask = lower_mask_red + upper_mask_red
+                    save_crop_(red_mask, str(save_dir), ix, ii, "red_mask0")
                     red_mask = cv2.erode(red_mask, None, iterations = 2)
+                    save_crop_(red_mask, str(save_dir), ix, ii, "red_mask1")
                     resred = cv2.bitwise_and(crop, crop, mask= red_mask)
+                    save_crop_(resred, str(save_dir), ix, ii, "red_mask2")
+                    save_crop_(crop, str(save_dir), ix, ii, "crop")
                     ratio_red = count_nonblack_np(resred)/count_nonblack_np(crop)
                     
                     mask_white = cv2.inRange(crop, lower_white, upper_white)
