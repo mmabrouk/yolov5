@@ -48,7 +48,7 @@ def save_crop_(crop, save_dir, crop_i, frame_i, annot="", mask=False):
     Path(save_dir).parent.mkdir(parents=True, exist_ok=True)
     out_fname = join(save_dir, f"{frame_i}_{crop_i}{annot}.jpg")
     if mask:
-        cv2.imwrite(out_fname, cv2.cvtColor(crop, cv2.COLOR_GREY2BGR))
+        cv2.imwrite(out_fname, cv2.cvtColor(crop, cv2.COLOR_GRAY2BGR))
     else:
         cv2.imwrite(out_fname, cv2.cvtColor(crop, cv2.COLOR_HSV2BGR))
 
