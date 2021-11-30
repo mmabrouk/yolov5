@@ -47,7 +47,7 @@ def count_nonblack_np(img):
 def save_crop_(crop, save_dir, crop_i, frame_i, annot=""):
     Path(save_dir).parent.mkdir(parents=True, exist_ok=True)
     out_fname = join(save_dir, f"{frame_i}_{crop_i}{annot}.jpg")
-    
+    import ipdb; ipdb.set_trace()
     cv2.imwrite(out_fname, cv2.cvtColor(crop, cv2.COLOR_HSV2BGR))
 
 @torch.no_grad()
