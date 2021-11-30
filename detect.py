@@ -215,9 +215,9 @@ def run(weights=ROOT / 'yolov5s.pt',  # model.pt path(s)
                     ratio_white = (white_mask==255).sum()/64**2
 
                     if ratio_white > ratio_red:
-                        label = f"white {ratio_white}>{ratio_red}"
+                        label = f"white {ratio_white:.2f}>{ratio_red:.2f}"
                     else:
-                        label = f"red {ratio_red}>{ratio_white}"
+                        label = f"red {ratio_red:.2f}>{ratio_white:.2f}"
                     annotator.box_label(xyxy, f"Team {label}", color=colors(c, True))
                 # import ipdb;ipdb.set_trace()
                     # if save_txt:  # Write to file
