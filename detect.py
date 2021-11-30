@@ -120,7 +120,7 @@ def run(weights=ROOT / 'yolov5s.pt',  # model.pt path(s)
     dt, seen = [0.0, 0.0, 0.0], 0
     for ii, (path, im, im0s, vid_cap, s) in enumerate(dataset):
         myplots.finddominantcolor(im0s)
-        if ii>10:
+        if ii>1:
             break
         t1 = time_sync()
         im = torch.from_numpy(im).to(device)
@@ -201,7 +201,7 @@ def run(weights=ROOT / 'yolov5s.pt',  # model.pt path(s)
                     save_crop_(resred, str(save_dir), ix, ii, "red_mask2")
                     save_crop_(crop, str(save_dir), ix, ii, "crop")
                     ratio_red = count_nonblack_np(resred)/count_nonblack_np(crop)
-                    save_one_box(xyxy, imc, file=save_dir / f'{p.stem}.jpg', BGR=True)
+                    save_one_box(xyxy, imc, file=save_dir / f"{ii}_{ix}{origcrop}.jpg", BGR=True)
                     mask_white = cv2.inRange(crop, lower_white, upper_white)
                     mask_white = cv2.erode(mask_white, None, iterations = 2)
                     reswhite = cv2.bitwise_and(crop, crop, mask= mask_white)
